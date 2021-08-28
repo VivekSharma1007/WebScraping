@@ -59,37 +59,53 @@ function allMatchScoreCard(html)
             let noOfTd = searchTool(batsManBody[i]).find("td");
             if(noOfTd.length == 8)
             {
-                let content = []
-                let jsonWritable = JSON.stringify(content);
+                let playerArr = [];
+                
                 let playerName = searchTool(noOfTd[0]).text();
                 let balls = searchTool(noOfTd[2]).text();
                 let four = searchTool(noOfTd[3]).text();
                 let six = searchTool(noOfTd[4]).text();
                 let sr = searchTool(noOfTd[6]).text();
                 
-               
+               let obj = {
+                   playerName,
+                   balls,
+                   four,
+                   six,
+                   sr,
+               }
                 
                 //console.log(teamNameFolderPath);
-                let fileNamePath = path.join(teamNameFolderPath , playerName);
+                let fileNamePath = path.join(teamNameFolderPath , playerName +".json");
                // console.log(fileNamePath);
                 if(fs.existsSync(fileNamePath) == false)
                 {
-                    fs.writeFileSync(fileNamePath+".json", jsonWritable);
-                    let jsoncontent = fs.readFileSync(fileNamePath+".json");
-                    let jsonData = JSON.parse(jsoncontent);
-                     jsonData.push(playerName);
-                     jsonData.push(balls);
-                     jsonData.push(four);
-                     jsonData.push(six);
-                     jsonData.push(sr);
+                   // fs.writeFileSync(fileNamePath+".json");
+                    playerArr.push(obj);
                 }
-                 //console.log(four);
+                else
+                {
+                    playerArr = getContent(fileNamePath);
+                    playerArr.push(obj);
+                }
+                writeContent(fileNamePath, playerArr);
+                //  console.log(four);
                 // console.log(six);
                 // console.log(sr);
                 // console.log(balls);
-                //console.log(playerName);
+                // console.log(playerName);
             }
         }
+    }
+    function getContent(fileNamePath)
+    {
+        let content = fs.readFileSync(fileNamePath);
+        return JSON.parse(content);
+    }
+    function writeContent(fileNamePath,playerArr)
+    {
+        let jsonData = JSON.stringify(playerArr);
+        fs.writeFileSync(fileNamePath, jsonData);
     }
 }
 
